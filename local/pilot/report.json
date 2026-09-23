@@ -1,0 +1,439 @@
+{
+  "status": "pass",
+  "result_format": "V1",
+  "verified_at_utc": "2026-09-23T04:54:50.707126+00:00",
+  "software_tests_passed": 32,
+  "Temperature": "unknown",
+  "temperature_source": "external label only; not measured",
+  "provenance": {
+    "experiment_sha256": "b57fde79272b309c7d93fe77e499a4f756f54c0e3ad52d40a1b9fda343bb58ca",
+    "recorded_setup": {
+      "source_commit": "037f09c5802c08f46ed02265603bb0dd1d8f69e7",
+      "bitstream_commit": "424dc72ae7b80ff205193747c72d6ec6a26e3ff2",
+      "bitstream": "external/dram-bender/hw/prebuilt/XCU200/XCU200_C1_UDIMM_ANYRANK_x8.bit",
+      "bitstream_sha256": "d329dfc346ae7b42b35215c5c2cd9385670eab3dac5057f9da285775a129255f"
+    }
+  },
+  "runs": {
+    "control": {
+      "archives": 24,
+      "results": 48,
+      "probes": 48,
+      "statuses": {
+        "control": 48
+      },
+      "manifest_and_archive_hashes_unchanged": true,
+      "masks_and_temperature_validated": true,
+      "files_world_readable": true,
+      "csv_rebuilt_without_hardware": true
+    },
+    "hcfirst": {
+      "archives": 6,
+      "results": 18,
+      "probes": 186,
+      "statuses": {
+        "bracketed": 9,
+        "right_censored": 9
+      },
+      "manifest_and_archive_hashes_unchanged": true,
+      "masks_and_temperature_validated": true,
+      "files_world_readable": true,
+      "csv_rebuilt_without_hardware": true,
+      "points": [
+        {
+          "mode": "double",
+          "pattern": 0,
+          "steps": 0,
+          "victim": 8,
+          "flips": [
+            1,
+            1,
+            1
+          ],
+          "ber": [
+            1.52587890625e-05,
+            1.52587890625e-05,
+            1.52587890625e-05
+          ],
+          "statuses": [
+            "bracketed",
+            "bracketed",
+            "bracketed"
+          ],
+          "hcfirst": [
+            27350,
+            27350,
+            27350
+          ],
+          "median_hcfirst": 27350,
+          "brackets": [
+            [
+              27343,
+              27350
+            ],
+            [
+              27343,
+              27350
+            ],
+            [
+              27343,
+              27350
+            ]
+          ],
+          "search_max": 500000
+        },
+        {
+          "mode": "lower",
+          "pattern": 0,
+          "steps": 0,
+          "victim": 8,
+          "flips": [
+            1,
+            1,
+            1
+          ],
+          "ber": [
+            1.52587890625e-05,
+            1.52587890625e-05,
+            1.52587890625e-05
+          ],
+          "statuses": [
+            "bracketed",
+            "bracketed",
+            "bracketed"
+          ],
+          "hcfirst": [
+            265625,
+            257812,
+            281195
+          ],
+          "median_hcfirst": 265625,
+          "brackets": [
+            [
+              265617,
+              265625
+            ],
+            [
+              257804,
+              257812
+            ],
+            [
+              281188,
+              281195
+            ]
+          ],
+          "search_max": 1000000
+        },
+        {
+          "mode": "upper",
+          "pattern": 0,
+          "steps": 0,
+          "victim": 8,
+          "flips": [
+            1,
+            1,
+            1
+          ],
+          "ber": [
+            1.52587890625e-05,
+            1.52587890625e-05,
+            1.52587890625e-05
+          ],
+          "statuses": [
+            "bracketed",
+            "bracketed",
+            "bracketed"
+          ],
+          "hcfirst": [
+            187507,
+            183600,
+            187507
+          ],
+          "median_hcfirst": 187507,
+          "brackets": [
+            [
+              187500,
+              187507
+            ],
+            [
+              183593,
+              183600
+            ],
+            [
+              187500,
+              187507
+            ]
+          ],
+          "search_max": 1000000
+        },
+        {
+          "mode": "double",
+          "pattern": 0,
+          "steps": 2322,
+          "victim": 8,
+          "flips": [
+            0,
+            0,
+            0
+          ],
+          "ber": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "statuses": [
+            "right_censored",
+            "right_censored",
+            "right_censored"
+          ],
+          "hcfirst": [
+            null,
+            null,
+            null
+          ],
+          "median_hcfirst": null,
+          "brackets": [
+            [
+              430,
+              null
+            ],
+            [
+              430,
+              null
+            ],
+            [
+              430,
+              null
+            ]
+          ],
+          "search_max": 430
+        },
+        {
+          "mode": "lower",
+          "pattern": 0,
+          "steps": 2322,
+          "victim": 8,
+          "flips": [
+            0,
+            0,
+            0
+          ],
+          "ber": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "statuses": [
+            "right_censored",
+            "right_censored",
+            "right_censored"
+          ],
+          "hcfirst": [
+            null,
+            null,
+            null
+          ],
+          "median_hcfirst": null,
+          "brackets": [
+            [
+              860,
+              null
+            ],
+            [
+              860,
+              null
+            ],
+            [
+              860,
+              null
+            ]
+          ],
+          "search_max": 860
+        },
+        {
+          "mode": "upper",
+          "pattern": 0,
+          "steps": 2322,
+          "victim": 8,
+          "flips": [
+            0,
+            0,
+            0
+          ],
+          "ber": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "statuses": [
+            "right_censored",
+            "right_censored",
+            "right_censored"
+          ],
+          "hcfirst": [
+            null,
+            null,
+            null
+          ],
+          "median_hcfirst": null,
+          "brackets": [
+            [
+              860,
+              null
+            ],
+            [
+              860,
+              null
+            ],
+            [
+              860,
+              null
+            ]
+          ],
+          "search_max": 860
+        }
+      ]
+    },
+    "ber": {
+      "archives": 3,
+      "results": 9,
+      "probes": 9,
+      "statuses": {
+        "measured": 9
+      },
+      "manifest_and_archive_hashes_unchanged": true,
+      "masks_and_temperature_validated": true,
+      "files_world_readable": true,
+      "csv_rebuilt_without_hardware": true,
+      "points": [
+        {
+          "mode": "double",
+          "pattern": 0,
+          "steps": 0,
+          "victim": 8,
+          "flips": [
+            74,
+            75,
+            75
+          ],
+          "ber": [
+            0.001129150390625,
+            0.0011444091796875,
+            0.0011444091796875
+          ],
+          "statuses": [
+            "measured",
+            "measured",
+            "measured"
+          ],
+          "hc_per_aggressor": 50000,
+          "aggregate_ber": 0.0011393229166666667
+        },
+        {
+          "mode": "lower",
+          "pattern": 0,
+          "steps": 0,
+          "victim": 8,
+          "flips": [
+            0,
+            0,
+            0
+          ],
+          "ber": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "statuses": [
+            "measured",
+            "measured",
+            "measured"
+          ],
+          "hc_per_aggressor": 50000,
+          "aggregate_ber": 0.0
+        },
+        {
+          "mode": "upper",
+          "pattern": 0,
+          "steps": 0,
+          "victim": 8,
+          "flips": [
+            0,
+            0,
+            0
+          ],
+          "ber": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "statuses": [
+            "measured",
+            "measured",
+            "measured"
+          ],
+          "hc_per_aggressor": 50000,
+          "aggregate_ber": 0.0
+        }
+      ]
+    },
+    "recovery": {
+      "archives": 2,
+      "results": 100,
+      "probes": 100,
+      "statuses": {
+        "measured": 100
+      },
+      "manifest_and_archive_hashes_unchanged": true,
+      "masks_and_temperature_validated": true,
+      "files_world_readable": true,
+      "csv_rebuilt_without_hardware": true
+    }
+  },
+  "recovery": {
+    "status": "pass",
+    "command": [
+      "/home/hluo/dram-rd-test/.venv/bin/python",
+      "/home/hluo/dram-rd-test/main.py",
+      "ber",
+      "--module",
+      "Samsung-U200-C1-SA0",
+      "--rows",
+      "8,16",
+      "--patterns",
+      "00",
+      "--hammer-modes",
+      "double",
+      "--repetitions",
+      "50",
+      "--taggon",
+      "5",
+      "--hc",
+      "1000",
+      "--verbose",
+      "--output-dir",
+      "/home/hluo/dram-rd-test/local/pilot/recovery"
+    ],
+    "interrupted_returncode": 130,
+    "interrupted_during": "second unit after its first probe",
+    "refresh_restored_on_interrupt": true,
+    "archives_before_resume": {
+      "r000008_p00_t5_mdouble.npz": "fafe9f174460aae1543d1d4487dac824fc0baae5df4641abdd34c9975752ae90"
+    },
+    "archives_after_resume": {
+      "r000016_p00_t5_mdouble.npz": "c9883ef95d01996cee53053d2e493b846c387bfc62277676181e12e5330f108f",
+      "r000008_p00_t5_mdouble.npz": "fafe9f174460aae1543d1d4487dac824fc0baae5df4641abdd34c9975752ae90"
+    },
+    "csv_rows_before_resume": 50,
+    "csv_removed_before_resume": true,
+    "csv_rows_after_resume": 100,
+    "unique_result_keys": 100,
+    "complete_resume_opened_hardware": false,
+    "host_wall_seconds": 2.7784303440712392
+  },
+  "totals": {
+    "archives": 35,
+    "results": 175,
+    "probes": 343
+  }
+}

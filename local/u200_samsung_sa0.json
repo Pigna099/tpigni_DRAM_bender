@@ -1,0 +1,17 @@
+{
+  "hostname": "safari-fpga62",
+  "board": "u200",
+  "pci_bdf": "0000:01:00.0",
+  "xdma_channel": 0,
+  "slot": "C1",
+  "module": "Samsung UDIMM x8; bitstream selected by user",
+  "row_mapping": "SA0",
+  "rank": 0,
+  "cachelines_per_row": 128,
+  "column_stride": 8,
+  "words_per_cacheline": 16,
+  "bitstream": "external/dram-bender/hw/prebuilt/XCU200/XCU200_C1_UDIMM_ANYRANK_x8.bit",
+  "bitstream_sha256": "d329dfc346ae7b42b35215c5c2cd9385670eab3dac5057f9da285775a129255f",
+  "source_commit": "037f09c5802c08f46ed02265603bb0dd1d8f69e7",
+  "bitstream_commit": "424dc72ae7b80ff205193747c72d6ec6a26e3ff2"
+}

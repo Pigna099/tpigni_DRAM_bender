@@ -1,0 +1,2045 @@
+{
+  "hardware_opened": false,
+  "configuration": {
+    "experiment": "hcfirst",
+    "module": "Samsung-U200-C1-SA0",
+    "pci_bdf": "0000:01:00.0",
+    "xdma_channel": 0,
+    "bank": 1,
+    "rank": 0,
+    "mapping": "SA0",
+    "rows": [
+      8
+    ],
+    "row_count": null,
+    "selection": "explicit physical rows",
+    "seed": 123,
+    "patterns": [
+      0
+    ],
+    "aggressor_pattern": null,
+    "repetitions": 1,
+    "temperature_label": "unknown",
+    "modes": [
+      "upper",
+      "lower",
+      "double"
+    ],
+    "taggon_steps": [
+      0,
+      1,
+      5,
+      2322
+    ],
+    "victim_write_recovery_cycles": 4,
+    "duration_limit_ms": 60.0,
+    "count_ceiling": null,
+    "min_hc": 1,
+    "hc": null,
+    "read_timeout_seconds": 5.0,
+    "total_act_ceiling": 1000000,
+    "resolution": 10,
+    "cachelines_per_row": 128,
+    "words_per_cacheline": 16,
+    "column_stride": 8,
+    "temperature_source": "external label only; not measured"
+  },
+  "workload": {
+    "units": 12,
+    "independent_results": 12,
+    "minimum_probes": 24,
+    "maximum_probes": 191,
+    "tested_bits_per_probe": 65536
+  },
+  "address_mapping": [
+    {
+      "physical_victim": 8,
+      "victim": 14,
+      "upper": 15,
+      "lower": 7
+    }
+  ],
+  "pattern_words": [
+    {
+      "victim": "00000000",
+      "aggressor": "ffffffff"
+    }
+  ],
+  "instruction_capacity": 32768,
+  "static_programs": {
+    "aggressor_initialization": {
+      "instructions": 302,
+      "modeled_ns": 3564.0,
+      "command_counts": {
+        "PRE": 3,
+        "ACT": 2,
+        "WR": 256
+      },
+      "act_rows": [
+        15,
+        7
+      ],
+      "decoded_instructions": [
+        "0000 | LI r7, 2",
+        "0001 | LI r8, 0",
+        "0002 | LI r9, 15",
+        "0003 | ST [r8], r9",
+        "0004 | LI PATTERN_REG, 4294967295",
+        "0005 | ST [r8 + 1], PATTERN_REG",
+        "0006 | ADDI r8, r8, 2",
+        "0007 | LI r9, 7",
+        "0008 | ST [r8], r9",
+        "0009 | LI PATTERN_REG, 4294967295",
+        "0010 | ST [r8 + 1], PATTERN_REG",
+        "0011 | ADDI r8, r8, 2",
+        "0012 | LI r8, 0",
+        "0013 | LI BAR, 1",
+        "0014 | LI CASR, 8",
+        "0015 | PRE BAR | NOP | NOP | NOP",
+        "0016 | LI CAR, 0",
+        "0017 | LI r10, 0",
+        "WRITE_ROW:",
+        "0018 | LD RAR, [r8]",
+        "...",
+        "0290 | NOP | NOP | NOP | NOP",
+        "0291 | WR BAR, CAR++ | NOP | NOP | NOP",
+        "0292 | NOP | NOP | NOP | NOP",
+        "0293 | WR BAR, CAR++ | NOP | NOP | NOP",
+        "0294 | NOP | NOP | NOP | NOP",
+        "0295 | WR BAR, CAR++ | NOP | NOP | NOP",
+        "0296 | NOP | NOP | NOP | NOP",
+        "0297 | NOP | NOP | NOP | NOP",
+        "0298 | ADDI r10, r10, 1",
+        "0299 | PRE BAR | NOP | NOP | NOP",
+        "0300 | BL r10, r7 -> WRITE_ROW (pc=18)",
+        "0301 | END"
+      ],
+      "trace_events": [
+        {
+          "command": "PRE",
+          "time_ns": 90.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": null,
+          "rank": 0
+        },
+        {
+          "command": "ACT",
+          "time_ns": 228.0,
+          "slot": 0,
+          "bank": 1,
+          "row": 15,
+          "column": null,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 246.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 0,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 258.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 8,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 270.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 16,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 282.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 24,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 294.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 32,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 306.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 40,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 318.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 48,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 330.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 56,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3402.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 952,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3414.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 960,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3426.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 968,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3438.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 976,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3450.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 984,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3462.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 992,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3474.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1000,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3486.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1008,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 3498.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1016,
+          "rank": 0
+        },
+        {
+          "command": "PRE",
+          "time_ns": 3522.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": null,
+          "rank": 0
+        }
+      ],
+      "trace_events_omitted": 241
+    },
+    "victim_initialization": {
+      "instructions": 303,
+      "modeled_ns": 1830.0,
+      "command_counts": {
+        "PRE": 2,
+        "ACT": 1,
+        "WR": 128
+      },
+      "act_rows": [
+        14
+      ],
+      "decoded_instructions": [
+        "0000 | LI BAR, 1",
+        "0001 | LI RAR, 14",
+        "0002 | LI CASR, 8",
+        "0003 | LI PATTERN_REG, 0",
+        "0004 | LDWD PATTERN_REG, lane=0",
+        "0005 | LI PATTERN_REG, 0",
+        "0006 | LDWD PATTERN_REG, lane=1",
+        "0007 | LI PATTERN_REG, 0",
+        "0008 | LDWD PATTERN_REG, lane=2",
+        "0009 | LI PATTERN_REG, 0",
+        "0010 | LDWD PATTERN_REG, lane=3",
+        "0011 | LI PATTERN_REG, 0",
+        "0012 | LDWD PATTERN_REG, lane=4",
+        "0013 | LI PATTERN_REG, 0",
+        "0014 | LDWD PATTERN_REG, lane=5",
+        "0015 | LI PATTERN_REG, 0",
+        "0016 | LDWD PATTERN_REG, lane=6",
+        "0017 | LI PATTERN_REG, 0",
+        "0018 | LDWD PATTERN_REG, lane=7",
+        "0019 | LI PATTERN_REG, 0",
+        "...",
+        "0291 | NOP | NOP | NOP | NOP",
+        "0292 | WR BAR, CAR++ | NOP | NOP | NOP",
+        "0293 | NOP | NOP | NOP | NOP",
+        "0294 | WR BAR, CAR++ | NOP | NOP | NOP",
+        "0295 | NOP | NOP | NOP | NOP",
+        "0296 | WR BAR, CAR++ | NOP | NOP | NOP",
+        "0297 | NOP | NOP | NOP | NOP",
+        "0298 | SLEEP 4 cycles",
+        "0299 | PRE BAR | NOP | NOP | NOP",
+        "0300 | NOP | NOP | NOP | NOP",
+        "0301 | NOP | NOP | NOP | NOP",
+        "0302 | END"
+      ],
+      "trace_events": [
+        {
+          "command": "PRE",
+          "time_ns": 210.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": null,
+          "rank": 0
+        },
+        {
+          "command": "ACT",
+          "time_ns": 234.0,
+          "slot": 0,
+          "bank": 1,
+          "row": 14,
+          "column": null,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 252.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 0,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 264.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 8,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 276.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 16,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 288.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 24,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 300.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 32,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 312.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 40,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 324.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 48,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 336.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 56,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1680.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 952,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1692.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 960,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1704.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 968,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1716.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 976,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1728.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 984,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1740.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 992,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1752.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1000,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1764.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1008,
+          "rank": 0
+        },
+        {
+          "command": "WR",
+          "time_ns": 1776.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1016,
+          "rank": 0
+        },
+        {
+          "command": "PRE",
+          "time_ns": 1812.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": null,
+          "rank": 0
+        }
+      ],
+      "trace_events_omitted": 111
+    },
+    "victim_readback": {
+      "instructions": 271,
+      "modeled_ns": 1650.0,
+      "command_counts": {
+        "PRE": 2,
+        "ACT": 1,
+        "RD": 128
+      },
+      "act_rows": [
+        14
+      ],
+      "decoded_instructions": [
+        "0000 | LI BAR, 1",
+        "0001 | LI RAR, 14",
+        "0002 | LI CASR, 8",
+        "0003 | PRE BAR | NOP | NOP | NOP",
+        "0004 | LI CAR, 0",
+        "0005 | AUTOGEN: INFO read_count=128",
+        "0006 | NOP | NOP | NOP | NOP",
+        "0007 | NOP | NOP | NOP | NOP",
+        "0008 | ACT BAR, RAR | NOP | NOP | NOP",
+        "0009 | NOP | NOP | NOP | NOP",
+        "0010 | NOP | NOP | NOP | NOP",
+        "0011 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0012 | NOP | NOP | NOP | NOP",
+        "0013 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0014 | NOP | NOP | NOP | NOP",
+        "0015 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0016 | NOP | NOP | NOP | NOP",
+        "0017 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0018 | NOP | NOP | NOP | NOP",
+        "0019 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "...",
+        "0259 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0260 | NOP | NOP | NOP | NOP",
+        "0261 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0262 | NOP | NOP | NOP | NOP",
+        "0263 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0264 | NOP | NOP | NOP | NOP",
+        "0265 | RD BAR, CAR++ | NOP | NOP | NOP",
+        "0266 | NOP | NOP | NOP | NOP",
+        "0267 | SLEEP 4 cycles",
+        "0268 | PRE BAR | NOP | NOP | NOP",
+        "0269 | SLEEP 3 cycles",
+        "0270 | END"
+      ],
+      "trace_events": [
+        {
+          "command": "PRE",
+          "time_ns": 18.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": null,
+          "rank": 0
+        },
+        {
+          "command": "ACT",
+          "time_ns": 48.0,
+          "slot": 0,
+          "bank": 1,
+          "row": 14,
+          "column": null,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 66.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 0,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 78.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 8,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 90.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 16,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 102.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 24,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 114.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 32,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 126.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 40,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 138.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 48,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 150.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 56,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1494.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 952,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1506.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 960,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1518.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 968,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1530.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 976,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1542.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 984,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1554.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 992,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1566.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1000,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1578.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1008,
+          "rank": 0
+        },
+        {
+          "command": "RD",
+          "time_ns": 1590.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": 1016,
+          "rank": 0
+        },
+        {
+          "command": "PRE",
+          "time_ns": 1626.0,
+          "slot": 0,
+          "bank": 1,
+          "row": null,
+          "column": null,
+          "rank": 0
+        }
+      ],
+      "trace_events_omitted": 111
+    }
+  },
+  "hammer_points": [
+    {
+      "legacy_taggon_steps": 0,
+      "mode": "upper",
+      "zero_ns": 48.0,
+      "fixed_ns": 48.0,
+      "per_hc_ns": 54.0,
+      "open_interval_ns": 37.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 11,
+      "acts_per_hc": 1,
+      "duration_max_hc": 1111110,
+      "search_max_hc": 1000000,
+      "search_max_total_acts": 1000000,
+      "selected_hc_bound_or_point": 1000000,
+      "selected_total_hammer_acts": 1000000,
+      "selected_hammer_ms": 54.000048,
+      "representative_hc2_program": {
+        "instructions": 11,
+        "modeled_ns": 156.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          15,
+          15
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | PRE BAR | NOP | NOP | NOP",
+          "0005 | ADDI r7, r7, 1",
+          "0006 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0007 | BL r7, r8 -> HAMMER (pc=4)",
+          "0008 | PRE BAR | NOP | NOP | NOP",
+          "0009 | SLEEP 3 cycles",
+          "0010 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 24.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 40.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 78.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 94.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 132.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 0,
+      "mode": "lower",
+      "zero_ns": 48.0,
+      "fixed_ns": 48.0,
+      "per_hc_ns": 54.0,
+      "open_interval_ns": 37.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 11,
+      "acts_per_hc": 1,
+      "duration_max_hc": 1111110,
+      "search_max_hc": 1000000,
+      "search_max_total_acts": 1000000,
+      "selected_hc_bound_or_point": 1000000,
+      "selected_total_hammer_acts": 1000000,
+      "selected_hammer_ms": 54.000048,
+      "representative_hc2_program": {
+        "instructions": 11,
+        "modeled_ns": 156.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          7,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 7",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | PRE BAR | NOP | NOP | NOP",
+          "0005 | ADDI r7, r7, 1",
+          "0006 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0007 | BL r7, r8 -> HAMMER (pc=4)",
+          "0008 | PRE BAR | NOP | NOP | NOP",
+          "0009 | SLEEP 3 cycles",
+          "0010 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 24.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 40.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 78.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 94.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 132.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 0,
+      "mode": "double",
+      "zero_ns": 48.0,
+      "fixed_ns": 48.0,
+      "per_hc_ns": 108.0,
+      "open_interval_ns": 37.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 16,
+      "acts_per_hc": 2,
+      "duration_max_hc": 555555,
+      "search_max_hc": 500000,
+      "search_max_total_acts": 1000000,
+      "selected_hc_bound_or_point": 500000,
+      "selected_total_hammer_acts": 1000000,
+      "selected_hammer_ms": 54.000048,
+      "representative_hc2_program": {
+        "instructions": 16,
+        "modeled_ns": 264.0,
+        "command_counts": {
+          "PRE": 5,
+          "ACT": 4
+        },
+        "act_rows": [
+          15,
+          7,
+          15,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | PRE BAR | NOP | NOP | NOP",
+          "0005 | LI RAR, 15",
+          "0006 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0007 | LI RAR, 7",
+          "0008 | SLEEP 5 cycles",
+          "0009 | PRE BAR | NOP | NOP | NOP",
+          "0010 | ADDI r7, r7, 1",
+          "0011 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0012 | BL r7, r8 -> HAMMER (pc=4)",
+          "0013 | PRE BAR | NOP | NOP | NOP",
+          "0014 | SLEEP 3 cycles",
+          "0015 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 24.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 40.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 78.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 94.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 132.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 148.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 186.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 202.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 240.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 1,
+      "mode": "upper",
+      "zero_ns": 48.0,
+      "fixed_ns": 48.0,
+      "per_hc_ns": 54.0,
+      "open_interval_ns": 37.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 11,
+      "acts_per_hc": 1,
+      "duration_max_hc": 1111110,
+      "search_max_hc": 1000000,
+      "search_max_total_acts": 1000000,
+      "selected_hc_bound_or_point": 1000000,
+      "selected_total_hammer_acts": 1000000,
+      "selected_hammer_ms": 54.000048,
+      "representative_hc2_program": {
+        "instructions": 11,
+        "modeled_ns": 156.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          15,
+          15
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | PRE BAR | NOP | NOP | NOP",
+          "0005 | ADDI r7, r7, 1",
+          "0006 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0007 | BL r7, r8 -> HAMMER (pc=4)",
+          "0008 | PRE BAR | NOP | NOP | NOP",
+          "0009 | SLEEP 3 cycles",
+          "0010 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 24.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 40.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 78.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 94.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 132.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 1,
+      "mode": "lower",
+      "zero_ns": 48.0,
+      "fixed_ns": 48.0,
+      "per_hc_ns": 54.0,
+      "open_interval_ns": 37.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 11,
+      "acts_per_hc": 1,
+      "duration_max_hc": 1111110,
+      "search_max_hc": 1000000,
+      "search_max_total_acts": 1000000,
+      "selected_hc_bound_or_point": 1000000,
+      "selected_total_hammer_acts": 1000000,
+      "selected_hammer_ms": 54.000048,
+      "representative_hc2_program": {
+        "instructions": 11,
+        "modeled_ns": 156.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          7,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 7",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | PRE BAR | NOP | NOP | NOP",
+          "0005 | ADDI r7, r7, 1",
+          "0006 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0007 | BL r7, r8 -> HAMMER (pc=4)",
+          "0008 | PRE BAR | NOP | NOP | NOP",
+          "0009 | SLEEP 3 cycles",
+          "0010 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 24.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 40.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 78.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 94.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 132.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 1,
+      "mode": "double",
+      "zero_ns": 48.0,
+      "fixed_ns": 48.0,
+      "per_hc_ns": 108.0,
+      "open_interval_ns": 37.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 16,
+      "acts_per_hc": 2,
+      "duration_max_hc": 555555,
+      "search_max_hc": 500000,
+      "search_max_total_acts": 1000000,
+      "selected_hc_bound_or_point": 500000,
+      "selected_total_hammer_acts": 1000000,
+      "selected_hammer_ms": 54.000048,
+      "representative_hc2_program": {
+        "instructions": 16,
+        "modeled_ns": 264.0,
+        "command_counts": {
+          "PRE": 5,
+          "ACT": 4
+        },
+        "act_rows": [
+          15,
+          7,
+          15,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | PRE BAR | NOP | NOP | NOP",
+          "0005 | LI RAR, 15",
+          "0006 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0007 | LI RAR, 7",
+          "0008 | SLEEP 5 cycles",
+          "0009 | PRE BAR | NOP | NOP | NOP",
+          "0010 | ADDI r7, r7, 1",
+          "0011 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0012 | BL r7, r8 -> HAMMER (pc=4)",
+          "0013 | PRE BAR | NOP | NOP | NOP",
+          "0014 | SLEEP 3 cycles",
+          "0015 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 24.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 40.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 78.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 94.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 132.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 148.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 186.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 202.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 240.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 5,
+      "mode": "upper",
+      "zero_ns": 48.0,
+      "fixed_ns": 168.0,
+      "per_hc_ns": 174.0,
+      "open_interval_ns": 157.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 13,
+      "acts_per_hc": 1,
+      "duration_max_hc": 344826,
+      "search_max_hc": 344826,
+      "search_max_total_acts": 344826,
+      "selected_hc_bound_or_point": 344826,
+      "selected_total_hammer_acts": 344826,
+      "selected_hammer_ms": 59.999892,
+      "representative_hc2_program": {
+        "instructions": 13,
+        "modeled_ns": 516.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          15,
+          15
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | SLEEP 20 cycles",
+          "0005 | PRE BAR | NOP | NOP | NOP",
+          "0006 | ADDI r7, r7, 1",
+          "0007 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0008 | BL r7, r8 -> HAMMER (pc=4)",
+          "0009 | SLEEP 20 cycles",
+          "0010 | PRE BAR | NOP | NOP | NOP",
+          "0011 | SLEEP 3 cycles",
+          "0012 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 144.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 160.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 318.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 334.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 492.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 5,
+      "mode": "lower",
+      "zero_ns": 48.0,
+      "fixed_ns": 168.0,
+      "per_hc_ns": 174.0,
+      "open_interval_ns": 157.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 13,
+      "acts_per_hc": 1,
+      "duration_max_hc": 344826,
+      "search_max_hc": 344826,
+      "search_max_total_acts": 344826,
+      "selected_hc_bound_or_point": 344826,
+      "selected_total_hammer_acts": 344826,
+      "selected_hammer_ms": 59.999892,
+      "representative_hc2_program": {
+        "instructions": 13,
+        "modeled_ns": 516.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          7,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 7",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | SLEEP 20 cycles",
+          "0005 | PRE BAR | NOP | NOP | NOP",
+          "0006 | ADDI r7, r7, 1",
+          "0007 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0008 | BL r7, r8 -> HAMMER (pc=4)",
+          "0009 | SLEEP 20 cycles",
+          "0010 | PRE BAR | NOP | NOP | NOP",
+          "0011 | SLEEP 3 cycles",
+          "0012 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 144.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 160.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 318.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 334.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 492.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 5,
+      "mode": "double",
+      "zero_ns": 48.0,
+      "fixed_ns": 168.0,
+      "per_hc_ns": 348.0,
+      "open_interval_ns": 157.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 19,
+      "acts_per_hc": 2,
+      "duration_max_hc": 172413,
+      "search_max_hc": 172413,
+      "search_max_total_acts": 344826,
+      "selected_hc_bound_or_point": 172413,
+      "selected_total_hammer_acts": 344826,
+      "selected_hammer_ms": 59.999892,
+      "representative_hc2_program": {
+        "instructions": 19,
+        "modeled_ns": 864.0,
+        "command_counts": {
+          "PRE": 5,
+          "ACT": 4
+        },
+        "act_rows": [
+          15,
+          7,
+          15,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | SLEEP 20 cycles",
+          "0005 | PRE BAR | NOP | NOP | NOP",
+          "0006 | LI RAR, 15",
+          "0007 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0008 | LI RAR, 7",
+          "0009 | SLEEP 5 cycles",
+          "0010 | SLEEP 20 cycles",
+          "0011 | PRE BAR | NOP | NOP | NOP",
+          "0012 | ADDI r7, r7, 1",
+          "0013 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0014 | BL r7, r8 -> HAMMER (pc=4)",
+          "0015 | SLEEP 20 cycles",
+          "0016 | PRE BAR | NOP | NOP | NOP",
+          "0017 | SLEEP 3 cycles",
+          "0018 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 144.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 160.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 318.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 334.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 492.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 508.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 666.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 682.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 840.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 2322,
+      "mode": "upper",
+      "zero_ns": 48.0,
+      "fixed_ns": 69678.0,
+      "per_hc_ns": 69684.0,
+      "open_interval_ns": 69667.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 13,
+      "acts_per_hc": 1,
+      "duration_max_hc": 860,
+      "search_max_hc": 860,
+      "search_max_total_acts": 860,
+      "selected_hc_bound_or_point": 860,
+      "selected_total_hammer_acts": 860,
+      "selected_hammer_ms": 59.997918,
+      "representative_hc2_program": {
+        "instructions": 13,
+        "modeled_ns": 209046.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          15,
+          15
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | SLEEP 11605 cycles",
+          "0005 | PRE BAR | NOP | NOP | NOP",
+          "0006 | ADDI r7, r7, 1",
+          "0007 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0008 | BL r7, r8 -> HAMMER (pc=4)",
+          "0009 | SLEEP 11605 cycles",
+          "0010 | PRE BAR | NOP | NOP | NOP",
+          "0011 | SLEEP 3 cycles",
+          "0012 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 69654.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 69670.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 139338.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 139354.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 209022.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 2322,
+      "mode": "lower",
+      "zero_ns": 48.0,
+      "fixed_ns": 69678.0,
+      "per_hc_ns": 69684.0,
+      "open_interval_ns": 69667.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 13,
+      "acts_per_hc": 1,
+      "duration_max_hc": 860,
+      "search_max_hc": 860,
+      "search_max_total_acts": 860,
+      "selected_hc_bound_or_point": 860,
+      "selected_total_hammer_acts": 860,
+      "selected_hammer_ms": 59.997918,
+      "representative_hc2_program": {
+        "instructions": 13,
+        "modeled_ns": 209046.0,
+        "command_counts": {
+          "PRE": 3,
+          "ACT": 2
+        },
+        "act_rows": [
+          7,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 7",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | SLEEP 11605 cycles",
+          "0005 | PRE BAR | NOP | NOP | NOP",
+          "0006 | ADDI r7, r7, 1",
+          "0007 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0008 | BL r7, r8 -> HAMMER (pc=4)",
+          "0009 | SLEEP 11605 cycles",
+          "0010 | PRE BAR | NOP | NOP | NOP",
+          "0011 | SLEEP 3 cycles",
+          "0012 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 69654.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 69670.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 139338.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 139354.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 209022.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    },
+    {
+      "legacy_taggon_steps": 2322,
+      "mode": "double",
+      "zero_ns": 48.0,
+      "fixed_ns": 69678.0,
+      "per_hc_ns": 139368.0,
+      "open_interval_ns": 69667.5,
+      "pre_to_act_ns": 16.5,
+      "instructions": 19,
+      "acts_per_hc": 2,
+      "duration_max_hc": 430,
+      "search_max_hc": 430,
+      "search_max_total_acts": 860,
+      "selected_hc_bound_or_point": 430,
+      "selected_total_hammer_acts": 860,
+      "selected_hammer_ms": 59.997918,
+      "representative_hc2_program": {
+        "instructions": 19,
+        "modeled_ns": 348414.0,
+        "command_counts": {
+          "PRE": 5,
+          "ACT": 4
+        },
+        "act_rows": [
+          15,
+          7,
+          15,
+          7
+        ],
+        "decoded_instructions": [
+          "0000 | LI BAR, 1",
+          "0001 | LI RAR, 15",
+          "0002 | LI r7, 0",
+          "0003 | LI r8, 2",
+          "HAMMER:",
+          "0004 | SLEEP 11605 cycles",
+          "0005 | PRE BAR | NOP | NOP | NOP",
+          "0006 | LI RAR, 15",
+          "0007 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0008 | LI RAR, 7",
+          "0009 | SLEEP 5 cycles",
+          "0010 | SLEEP 11605 cycles",
+          "0011 | PRE BAR | NOP | NOP | NOP",
+          "0012 | ADDI r7, r7, 1",
+          "0013 | NOP | NOP | NOP | ACT BAR, RAR",
+          "0014 | BL r7, r8 -> HAMMER (pc=4)",
+          "0015 | SLEEP 11605 cycles",
+          "0016 | PRE BAR | NOP | NOP | NOP",
+          "0017 | SLEEP 3 cycles",
+          "0018 | END"
+        ],
+        "trace_events": [
+          {
+            "command": "PRE",
+            "time_ns": 69654.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 69670.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 139338.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 139354.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 209022.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 209038.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 15,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 278706.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "ACT",
+            "time_ns": 278722.5,
+            "slot": 3,
+            "bank": 1,
+            "row": 7,
+            "column": null,
+            "rank": 0
+          },
+          {
+            "command": "PRE",
+            "time_ns": 348390.0,
+            "slot": 0,
+            "bank": 1,
+            "row": null,
+            "column": null,
+            "rank": 0
+          }
+        ],
+        "trace_events_omitted": 0
+      }
+    }
+  ],
+  "timing_scope": "V2 VM model of hammer only; excludes transport, host gaps, initialization and readback",
+  "Temperature": "unknown",
+  "temperature_source": "external label only; not measured"
+}

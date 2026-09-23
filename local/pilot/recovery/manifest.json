@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "configuration": {
+    "experiment": "ber",
+    "module": "Samsung-U200-C1-SA0",
+    "pci_bdf": "0000:01:00.0",
+    "xdma_channel": 0,
+    "bank": 1,
+    "rank": 0,
+    "mapping": "SA0",
+    "rows": [
+      8,
+      16
+    ],
+    "row_count": null,
+    "selection": "explicit physical rows",
+    "seed": 123,
+    "patterns": [
+      0
+    ],
+    "aggressor_pattern": null,
+    "repetitions": 50,
+    "temperature_label": "unknown",
+    "modes": [
+      "double"
+    ],
+    "taggon_steps": [
+      5
+    ],
+    "victim_write_recovery_cycles": 4,
+    "duration_limit_ms": 60.0,
+    "count_ceiling": null,
+    "min_hc": 1,
+    "hc": 1000,
+    "read_timeout_seconds": 5.0,
+    "total_act_ceiling": null,
+    "resolution": 10,
+    "cachelines_per_row": 128,
+    "words_per_cacheline": 16,
+    "column_stride": 8,
+    "temperature_source": "external label only; not measured"
+  },
+  "Temperature": "unknown",
+  "provenance": {
+    "experiment_sha256": "b57fde79272b309c7d93fe77e499a4f756f54c0e3ad52d40a1b9fda343bb58ca",
+    "recorded_setup": {
+      "source_commit": "037f09c5802c08f46ed02265603bb0dd1d8f69e7",
+      "bitstream_commit": "424dc72ae7b80ff205193747c72d6ec6a26e3ff2",
+      "bitstream": "external/dram-bender/hw/prebuilt/XCU200/XCU200_C1_UDIMM_ANYRANK_x8.bit",
+      "bitstream_sha256": "d329dfc346ae7b42b35215c5c2cd9385670eab3dac5057f9da285775a129255f"
+    }
+  },
+  "created_at_utc": "2026-09-23T04:53:30.309801+00:00",
+  "host": "safari-fpga62",
+  "mask_format": "uint8 XOR bytes; cacheline/word/byte readback order; LSB is bit 0"
+}

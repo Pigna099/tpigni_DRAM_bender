@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "command": [
+    "/home/hluo/dram-rd-test/.venv/bin/python",
+    "/home/hluo/dram-rd-test/main.py",
+    "ber",
+    "--module",
+    "Samsung-U200-C1-SA0",
+    "--rows",
+    "8,16",
+    "--patterns",
+    "00",
+    "--hammer-modes",
+    "double",
+    "--repetitions",
+    "50",
+    "--taggon",
+    "5",
+    "--hc",
+    "1000",
+    "--verbose",
+    "--output-dir",
+    "/home/hluo/dram-rd-test/local/pilot/recovery"
+  ],
+  "interrupted_returncode": 130,
+  "interrupted_during": "second unit after its first probe",
+  "refresh_restored_on_interrupt": true,
+  "archives_before_resume": {
+    "r000008_p00_t5_mdouble.npz": "fafe9f174460aae1543d1d4487dac824fc0baae5df4641abdd34c9975752ae90"
+  },
+  "archives_after_resume": {
+    "r000016_p00_t5_mdouble.npz": "c9883ef95d01996cee53053d2e493b846c387bfc62277676181e12e5330f108f",
+    "r000008_p00_t5_mdouble.npz": "fafe9f174460aae1543d1d4487dac824fc0baae5df4641abdd34c9975752ae90"
+  },
+  "csv_rows_before_resume": 50,
+  "csv_removed_before_resume": true,
+  "csv_rows_after_resume": 100,
+  "unique_result_keys": 100,
+  "complete_resume_opened_hardware": false,
+  "host_wall_seconds": 2.7784303440712392
+}

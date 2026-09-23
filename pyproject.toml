@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dram-rd-characterization"
+version = "0.1.0"
+description = "DejaVu-style baseline HCFirst and BER characterization on DRAM Bender V2"
+requires-python = ">=3.10"
+dependencies = ["drambender==0.1.0", "numpy>=1.26"]
+
+[project.scripts]
+dram-characterize = "main:main"
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+include = ["characterization*"]

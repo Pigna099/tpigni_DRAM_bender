@@ -1,0 +1,275 @@
+{
+  "status": "pass",
+  "verified_at": "2026-09-23T00:26:24.433362+00:00",
+  "hostname": "safari-fpga62",
+  "kernel": "6.8.0-138-generic",
+  "configuration": {
+    "hostname": "safari-fpga62",
+    "board": "u200",
+    "pci_bdf": "0000:01:00.0",
+    "xdma_channel": 0,
+    "slot": "C1",
+    "module": "Samsung UDIMM x8; bitstream selected by user",
+    "row_mapping": "SA0",
+    "rank": 0,
+    "cachelines_per_row": 128,
+    "column_stride": 8,
+    "words_per_cacheline": 16,
+    "bitstream": "hw/prebuilt/XCU200/XCU200_C1_UDIMM_ANYRANK_x8.bit",
+    "bitstream_sha256": "d329dfc346ae7b42b35215c5c2cd9385670eab3dac5057f9da285775a129255f",
+    "source_commit": "037f09c5802c08f46ed02265603bb0dd1d8f69e7",
+    "bitstream_commit": "424dc72ae7b80ff205193747c72d6ec6a26e3ff2"
+  },
+  "driver": {
+    "module": "drambender_xdma",
+    "srcversion": "37AF925418A456732275CEA",
+    "sha256": "218330e8d774b212057ba7cc9b8c02f6689f0857ffbb44f2c7b50e51fc79e6c9",
+    "enable_st_c2h_credit": 1,
+    "device_access": "non-root, existing smc_user group, mode 0660"
+  },
+  "calibration": "CAL PASS",
+  "host_ctests_passed": 11,
+  "single_row_example_words_verified": 2048,
+  "upstream_profiles": {
+    "host-tests": {
+      "profile": "host",
+      "started_at": "2026-09-23T00:15:27.136690+00:00",
+      "finished_at": "2026-09-23T00:16:08.284817+00:00",
+      "results": [
+        {
+          "name": "configure host-only test build",
+          "status": "pass",
+          "elapsed_seconds": 3.260859363246709,
+          "returncode": 0
+        },
+        {
+          "name": "build host-only tests",
+          "status": "pass",
+          "elapsed_seconds": 30.96690658899024,
+          "returncode": 0
+        },
+        {
+          "name": "run host-only tests",
+          "status": "pass",
+          "elapsed_seconds": 6.91999692004174,
+          "returncode": 0
+        }
+      ],
+      "evidence": "build/machine-check/host-tests.json"
+    },
+    "u200-smoke": {
+      "profile": "u200-smoke",
+      "started_at": "2026-09-23T00:19:45.597681+00:00",
+      "finished_at": "2026-09-23T00:20:03.708789+00:00",
+      "results": [
+        {
+          "name": "configure dedicated Release board-qualification build",
+          "status": "pass",
+          "elapsed_seconds": 2.858323504216969,
+          "returncode": 0
+        },
+        {
+          "name": "build current Release qualification targets",
+          "status": "pass",
+          "elapsed_seconds": 10.655886956024915,
+          "returncode": 0
+        },
+        {
+          "name": "small DDR4 read/write integrity (C++)",
+          "status": "pass",
+          "elapsed_seconds": 0.5440969872288406,
+          "returncode": 0
+        },
+        {
+          "name": "small DDR4 read/write integrity (Python)",
+          "status": "pass",
+          "elapsed_seconds": 0.6497268988750875,
+          "returncode": 0
+        },
+        {
+          "name": "full-reset recovery smoke test (C++)",
+          "status": "pass",
+          "elapsed_seconds": 1.6424366519786417,
+          "returncode": 0
+        },
+        {
+          "name": "full-reset recovery smoke test (Python)",
+          "status": "pass",
+          "elapsed_seconds": 1.759955300949514,
+          "returncode": 0
+        }
+      ],
+      "evidence": "build/machine-check/u200-smoke.json"
+    },
+    "u200-correctness": {
+      "profile": "u200-correctness",
+      "started_at": "2026-09-23T00:23:49.941170+00:00",
+      "finished_at": "2026-09-23T00:23:55.819878+00:00",
+      "results": [
+        {
+          "name": "configure dedicated Release board-qualification build",
+          "status": "pass",
+          "elapsed_seconds": 0.42468136781826615,
+          "returncode": 0
+        },
+        {
+          "name": "build current Release qualification targets",
+          "status": "pass",
+          "elapsed_seconds": 0.15337355714291334,
+          "returncode": 0
+        },
+        {
+          "name": "DDR4 read/write integrity sweep (C++)",
+          "status": "pass",
+          "elapsed_seconds": 0.654299289919436,
+          "returncode": 0
+        },
+        {
+          "name": "DDR4 read/write integrity sweep (Python)",
+          "status": "pass",
+          "elapsed_seconds": 0.7715758341364563,
+          "returncode": 0
+        },
+        {
+          "name": "VM-to-hardware timing report (Python, non-gating)",
+          "status": "pass",
+          "elapsed_seconds": 3.874203247949481,
+          "returncode": 0
+        }
+      ],
+      "evidence": "build/machine-check/u200-correctness.json"
+    }
+  },
+  "correctness_sweep": {
+    "bank": 0,
+    "rows": 4096,
+    "bytes_verified_per_api": 33554432,
+    "apis": [
+      "C++",
+      "Python"
+    ]
+  },
+  "sa0": {
+    "started_at": "2026-09-23T00:23:14.354441+00:00",
+    "config": {
+      "hostname": "safari-fpga62",
+      "board": "u200",
+      "pci_bdf": "0000:01:00.0",
+      "xdma_channel": 0,
+      "slot": "C1",
+      "module": "Samsung UDIMM x8; bitstream selected by user",
+      "row_mapping": "SA0",
+      "rank": 0,
+      "cachelines_per_row": 128,
+      "column_stride": 8,
+      "words_per_cacheline": 16,
+      "bitstream": "hw/prebuilt/XCU200/XCU200_C1_UDIMM_ANYRANK_x8.bit",
+      "bitstream_sha256": "d329dfc346ae7b42b35215c5c2cd9385670eab3dac5057f9da285775a129255f",
+      "source_commit": "037f09c5802c08f46ed02265603bb0dd1d8f69e7",
+      "bitstream_commit": "424dc72ae7b80ff205193747c72d6ec6a26e3ff2"
+    },
+    "physical_to_logical_rows": {
+      "0": 0,
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "4": 4,
+      "5": 5,
+      "6": 6,
+      "7": 7,
+      "8": 14,
+      "9": 15,
+      "10": 12,
+      "11": 13,
+      "12": 10,
+      "13": 11,
+      "14": 8,
+      "15": 9,
+      "16": 16,
+      "17": 17,
+      "18": 18,
+      "19": 19,
+      "20": 20,
+      "21": 21,
+      "22": 22,
+      "23": 23,
+      "24": 30,
+      "25": 31,
+      "26": 28,
+      "27": 29,
+      "28": 26,
+      "29": 27,
+      "30": 24,
+      "31": 25
+    },
+    "banks": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "results": [
+      {
+        "pattern": "zeros",
+        "rows_checked": 512,
+        "bytes_checked": 4194304,
+        "mismatched_words": 0
+      },
+      {
+        "pattern": "ones",
+        "rows_checked": 512,
+        "bytes_checked": 4194304,
+        "mismatched_words": 0
+      },
+      {
+        "pattern": "checkerboard-a",
+        "rows_checked": 512,
+        "bytes_checked": 4194304,
+        "mismatched_words": 0
+      },
+      {
+        "pattern": "checkerboard-5",
+        "rows_checked": 512,
+        "bytes_checked": 4194304,
+        "mismatched_words": 0
+      },
+      {
+        "pattern": "bank-row-lane-tags",
+        "rows_checked": 512,
+        "bytes_checked": 4194304,
+        "mismatched_words": 0
+      }
+    ],
+    "status": "pass",
+    "scope": "rank 0, physical rows 0..31, banks 0..15; supplied SA0 mapping, not adjacency discovery",
+    "elapsed_seconds": 2.3927913601510227,
+    "finished_at": "2026-09-23T00:23:16.747256+00:00"
+  },
+  "sa0_total_bytes_verified": 20971520,
+  "initial_sa0_attempt": {
+    "status": "interrupted_by_120_second_test_timeout",
+    "stage": "JIT compilation of unique tuple patterns on the host",
+    "hardware_patterns_passed_before_timeout": 4,
+    "resolution": "Use the underlying Python program builder for the 512 one-off address-tag patterns; final complete run passed.",
+    "evidence": "build/machine-check/sa0-initial-jit-timeout.log"
+  },
+  "final_board_state": "idle, full_reset completed, auto-refresh enabled, endpoint released",
+  "limits": [
+    "rank 0 tested; not an exhaustive DIMM test",
+    "SA0 supplied by user, physical adjacency not independently discovered",
+    "VM wall-clock comparison is diagnostic, not timing qualification",
+    "driver must be reloaded after reboot; volatile FPGA image must be restored after power loss"
+  ]
+}
