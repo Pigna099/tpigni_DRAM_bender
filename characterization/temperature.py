@@ -27,7 +27,7 @@ class TemperatureConfig:
     # Pulsed-pump regime, used when the DRAM target is not below the liquid
     # temperature. The pump is cycled by the DRAM temperature while the
     # Peltier (cooling only) keeps trimming to dram_target.
-    pump_min_seconds: float = 20.0
+    pump_min_seconds: float = 10.0
     pump_band_high: float = 1.0
     pump_band_low: float = 1.0
     pulse_margin: float = 2.0
@@ -37,12 +37,12 @@ class TemperatureConfig:
     # PI mode. The PI output is a duty in [0, 1] applied over one window:
     # the pump is on for duty * window seconds at the start of each window.
     # pump_kp is duty per C of error, pump_ki is duty per C per second.
-    pump_window_seconds: float = 60.0
+    pump_window_seconds: float = 30.0
     pump_kp: float = 0.1
     pump_ki: float = 0.0005
     pump_duty_initial: float = 0.3
     # Longest continuous pump-on time while near the target.
-    pump_max_on_seconds: float = 35.0
+    pump_max_on_seconds: float = 15.0
     # Further than this above the target (e.g. during pull-down) the pump stays
     # on continuously and the on-time limit does not apply.
     pump_full_on_above: float = 3.0

@@ -83,6 +83,10 @@ class TemperatureTests(unittest.TestCase):
         dram = FakeController()
         liquid = FakeController()
         settings.setdefault("pump_mode", "bangbang")
+        # Pin the timing so these tests do not depend on the shipped defaults.
+        settings.setdefault("pump_min_seconds", 20.0)
+        settings.setdefault("pump_window_seconds", 60.0)
+        settings.setdefault("pump_max_on_seconds", 35.0)
         config = TemperatureConfig(target, liquid_target, **settings)
         monitor = TemperatureMonitor(dram, liquid, config, clock=lambda: 0.0)
         monitor.apply_targets()
@@ -214,7 +218,9 @@ class TemperatureTests(unittest.TestCase):
             with self.subTest(settings=settings):
                 with self.assertRaisesRegex(ValueError, message):
                     TemperatureMonitor(FakeController(), FakeController(),
-                                       TemperatureConfig(-10, -50, **settings))
+                                       TemperatureConfig(-10, -50, **{
+                                           "pump_min_seconds": 20, "pump_window_seconds": 60,
+                                           "pump_max_on_seconds": 35, **settings}))
 
     def test_rejects_invalid_pump_settings(self):
         with self.assertRaisesRegex(ValueError, "bands"):
