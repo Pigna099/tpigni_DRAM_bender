@@ -1,0 +1,9 @@
+{
+  "dram_target": 50.0,
+  "liquid_target": -50.0,
+  "poll_seconds": 1.0,
+  "safety_margin_dram": 10.0,
+  "safety_margin_liquid": 15.0,
+  "safety_delay_seconds": 500.0,
+  "safe_target": 50.0
+}

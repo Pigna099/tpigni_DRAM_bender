@@ -1,4 +1,7 @@
 import unittest
+import json
+import tempfile
+from pathlib import Path
 
 from characterization.audit import build_audit
 from characterization.config import DEFAULT_SWEEP, build_parser, resolve
@@ -72,6 +75,13 @@ class ConfigTests(unittest.TestCase):
             old_option = self.parse(*args, "--temperature-label", "50 C", experiment=experiment)
             self.assertEqual(c, old_option)
             self.assertEqual(build_audit(c)["Temperature"], "50 C")
+
+    def test_temperature_label_is_derived_from_controller_config(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "temperature.json"
+            path.write_text(json.dumps({"dram_target": -20, "liquid_target": -50}))
+            c = self.parse("--rows", "8", "--temperature-config", str(path))
+            self.assertEqual(c.temperature_label, "-20 C")
 
 
 if __name__ == "__main__":

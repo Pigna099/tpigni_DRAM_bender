@@ -47,8 +47,8 @@ def build_audit(config):
                 per_trial_max = per_trial_min + max(0, math.ceil(math.log2(max(1, (maximum - config.min_hc) / config.resolution))))
                 hc = maximum
             else:
-                per_trial_min = per_trial_max = 1
-                hc = config.hc
+                per_trial_min = per_trial_max = len(config.hc_values)
+                hc = config.hc if config.hc is not None else config.hc_values[-1]
             units = len(config.rows) * len(config.patterns) * config.repetitions
             min_probes += per_trial_min * units
             max_probes += per_trial_max * units

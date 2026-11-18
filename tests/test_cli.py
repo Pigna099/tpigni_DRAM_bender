@@ -75,6 +75,8 @@ class CLITests(unittest.TestCase):
                 for row in rows:
                     self.assertEqual(row["experiment"], experiment)
                     self.assertEqual(row["Temperature"], "50 C")
+                    self.assertEqual(row["dram_temperature"], "")
+                    self.assertEqual(row["liquid_temperature"], "")
                     self.assertEqual(row["flips"], "0")
                     self.assertEqual(row["status"], "right_censored" if experiment == "hcfirst" else "control")
                     if experiment == "hcfirst":

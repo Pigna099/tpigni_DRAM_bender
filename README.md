@@ -59,6 +59,11 @@ python -m unittest discover -s tests -v
 `.venv`. It does not program the FPGA. The installed `dram-characterize`
 command accepts the same arguments as `python main.py`.
 
+For timed runs with automatic result-folder creation, use
+`automate_experiment.py`. Put the normal `main.py` command after `--`; the
+wrapper creates a new timestamped folder and sends a graceful stop when the
+duration expires.
+
 ## Counts, timing, and temperature
 
 HC is counted **per aggressor**. Double-sided HC=50,000 emits 50,000 ACTs to
@@ -77,10 +82,18 @@ At legacy 2322, the time limit reduces these counts to 860 and 430. The optional
 the duration limit. To change that limit, use `--duration-limit-ms` or
 `--no-duration-limit`. Host time is recorded separately.
 
-Set the temperature with your external controller and pass its label using
-`--temperature '50 C'`. The code does not control or measure temperature.
-The supplied text is saved as `Temperature`; the default is `unknown`.
-Replace the example labels below with your experiment's actual setpoint.
+To enable the fixed FT200 controller monitor, pass a JSON configuration with
+`--temperature-config temperature.warm-50c.json`. Its `dram_target` is also
+used as the recorded temperature label, so the target is specified only once.
+The monitor uses the vendored FT200 implementation in
+`characterization/ft200/ft200.py`, opens device IDs 0 and 1 at addresses 2
+and 1, and restores both controllers to `safe_target` when the run exits. The
+JSON configuration is resolved once at
+startup; it is not reread or rewritten during the run.
+
+The target is saved as `Temperature`; measured controller samples are logged
+in the run events. The FT200 dependencies (`minimalmodbus`
+and `pyserial`) are imported only when `--temperature-config` is used.
 
 ## Preview a run without hardware
 
@@ -101,13 +114,51 @@ Start with an initialization/readback control. HC=0 skips hammer ACTs:
 ```bash
 python main.py ber --rows 8,16 --patterns 00,ff,55,aa \
   --hammer-modes upper,lower,double --repetitions 3 \
-  --taggon 0 --hc 0 --temperature '50 C' --output-dir results/control
+  --taggon 0 --hc 0 --temperature-label '50 C' --output-dir results/control
 ```
+
+With FT200 temperature control enabled:
+
+```bash
+python main.py ber --rows 8,16 --patterns 00 --repetitions 3 \
+  --taggon 0 --hc 0 \
+  --temperature-config temperature.warm-50c.json --output-dir results/control-ft200
+```
+
+The same experiment, automated for 20 minutes at 50 C:
+
+```bash
+python automate_experiment.py \
+  --duration-minutes 20 \
+  --temperature-config temperature.warm-50c.json \
+  -- ber --rows 8,16 --patterns 00 --taggon 0 --hc 50000 --repetitions 100000
+```
+
+The extra `--` separates wrapper options from the experiment command. The
+wrapper creates a directory such as
+`results/20260923-173000_ber_A1V0_-10C`, where `A1V0` identifies the
+aggressor/victim pattern, adds `--output-dir`, and sends `SIGTERM` after 20
+minutes so FPGA refresh and temperature cleanup can run. When the process
+exits, it automatically writes `plot.png` in the same result folder. If
+multiple victim patterns are selected, all pattern labels are included in the
+folder name.
+
+BER can also sweep HC in one run and one `summary.csv`:
+
+```bash
+python main.py ber --rows 8,16 --patterns 00 --taggon 0 \
+  --hc-start 10000 --hc-end 50000 --hc-step 10000 --repetitions 3 \
+  --temperature-label '50 C' --output-dir results/ber-hc-sweep
+```
+
+The BER plot detects multiple `hc_per_aggressor` values and plots median BER
+and flipped bits against HC, with a 10th-90th percentile band across the
+recorded victim rows and repetitions.
 
 Run independent HCFirst searches over several timings:
 
 ```bash
-python main.py hcfirst --rows 8,16 --patterns 00 \
+python3 main.py hcfirst --rows 8,16 --patterns 00 \
   --hammer-modes upper,lower,double --repetitions 3 \
   --taggon 0,5,2322 --temperature '50 C' --output-dir results/hcfirst
 ```
@@ -115,9 +166,42 @@ python main.py hcfirst --rows 8,16 --patterns 00 \
 Run BER at one fixed timing and count:
 
 ```bash
-python main.py ber --rows 8,16 --patterns 00 \
+python3 main.py ber --rows 8,16 --patterns 00 \
   --hammer-modes upper,lower,double --repetitions 3 \
   --taggon 0 --hc 50000 --temperature '50 C' --output-dir results/ber
+```
+
+Plot a result CSV or result directory:
+
+```bash
+python3 plot_results.py results/20260923-170126_ber_-20C
+```
+
+This creates `plot.png` in that result directory with flipped bits and BER
+versus repetition. To combine multiple result CSVs, pass them together and
+choose an output path with `--output`.
+
+To combine every immediate result directory into four pattern-specific plots
+(BER A0V1, BER A1V0, HCFirst A1V1, and HCFirst A0V0):
+
+```bash
+python3 plot_all_results.py
+```
+
+This writes the aggregate plots under `results/analysis/`, with a `.txt`
+sidecar listing the source run IDs. The HCFirst plots use one consistent color
+per tested temperature and include a temperature legend.
+
+Each automated run also appends a row to `results/runs_index.csv` and enriches
+its manifest with the run ID, round, canonical pattern, target and measured
+temperature statistics, launcher answers, and review fields.
+
+The script also writes BER-only plots restricted to HC per aggressor from
+300,000 through 500,000:
+
+```text
+results/ber_a0v1_hc300k_500k_results.png
+results/ber_a1v0_hc300k_500k_results.png
 ```
 
 `upper` means physical victim + 1; `lower` means physical victim - 1. `double`
@@ -127,8 +211,9 @@ data complementary to the victim pattern unless `--aggressor-pattern` is set.
 construction.
 
 For a full sampled run, set `MODULE_ROWS` to the module's actual row count per
-bank. Sampling excludes 1,024 rows at each bank boundary. The code does not
-infer the module's density.
+bank. Random sampling uses physical rows from `1` through
+`MODULE_ROWS - 2`, leaving the final row available as the required upper
+neighbor. The code does not infer the module's density.
 
 ```bash
 : "${MODULE_ROWS:?Set MODULE_ROWS to the actual rows per bank}"

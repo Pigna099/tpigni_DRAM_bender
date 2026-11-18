@@ -49,7 +49,10 @@ case "${1:-}" in
             echo 'Create build/machine-check as your normal user first.' >&2; exit 1;
         }
         [[ $(cat "${pci_device}/vendor") == 0x10ee ]]
-        [[ $(cat "${pci_device}/device") == 0x9038 ]]
+        case "$(cat "${pci_device}/device")" in
+            0x9038|0xd000) ;;
+            *) echo 'Unexpected Xilinx PCI device; refusing to program hardware.' >&2; exit 1 ;;
+        esac
         upstream_bridge="$(dirname "$(readlink -f "$pci_device")")"
         [[ -w "${upstream_bridge}/rescan" ]]
         unload_driver

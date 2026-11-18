@@ -6,8 +6,9 @@ if {![file isfile $bitfile]} { error "Missing bitstream: $bitfile" }
 if {[catch {
     open_hw_manager
     connect_hw_server -url localhost:3121
-    set targets [get_hw_targets */Xilinx/21291036400NA]
-    if {[llength $targets] != 1} { error "Expected U200 JTAG serial 21291036400NA." }
+    refresh_hw_server
+    set targets [get_hw_targets */Xilinx/*]
+    if {[llength $targets] != 1} { error "Expected exactly one Xilinx JTAG target." }
     current_hw_target [lindex $targets 0]
     set_property PARAM.FREQUENCY 15000000 [current_hw_target]
     open_hw_target

@@ -12,6 +12,7 @@ from characterization.audit import build_audit
 from characterization.checkpoint import RunStore, unit_id, work_units
 from characterization.config import build_parser, resolve
 from characterization.measurement import Measurement, hardware_session
+from characterization.temperature import temperature_session
 
 LOG = logging.getLogger("characterization")
 
@@ -79,20 +80,29 @@ def run_experiment(config, directory, *, verbose=False, progress_seconds=10):
                 return
             progress = Progress(config.unit_count, len(store.completed), progress_seconds)
             try:
-                with hardware_session(config) as board:
+                with temperature_session(config) as temperature, hardware_session(config) as board:
                     for unit in work_units(config):
+                        if temperature is not None:
+                            temperature.check()
                         key = unit_id(unit)
                         if key in store.completed:
                             continue
                         LOG.info("starting unit %s mapped_rows=%s", key, config.addresses(unit["victim"]))
                         started = time.monotonic()
-                        measure = Measurement(board, config, **unit)
+                        measure = Measurement(
+                            board, config, unit["victim"],
+                            **{name: unit[name] for name in ("pattern", "steps", "mode")})
                         if config.experiment == "hcfirst":
                             trials = hcfirst_runner.run_unit(measure, config)
                         else:
-                            trials = ber_runner.run_unit(measure, config)
+                            trials = ber_runner.run_unit(measure, config, unit.get("hc"))
                         results = []
                         for repetition, result in enumerate(trials, start=1):
+                            if temperature is not None:
+                                temperature.check()
+                                _, dram_temperature, liquid_temperature = temperature.last_sample
+                                result.metadata["dram_temperature"] = dram_temperature
+                                result.metadata["liquid_temperature"] = liquid_temperature
                             results.append(result)
                             progress.report(key, repetition, config.repetitions)
                         store.commit(unit, results, time.monotonic() - started)

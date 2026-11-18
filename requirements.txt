@@ -1,2 +1,5 @@
 -e ./external/dram-bender
 -e .
+matplotlib>=3.7
+minimalmodbus
+pyserial

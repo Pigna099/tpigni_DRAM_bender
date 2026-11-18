@@ -20,9 +20,12 @@ verification, and bounded hardware experiments discussed in this task.
 - The default complete hammer-program duration ceiling is **60 ms**, including
   setup and terminal timing. Longer legacy tAggON settings reduce the maximum
   HC to remain within that duration. Use the tighter of the ACT and time bounds.
-- tAggON is encoded in legacy steps, not nanoseconds. Temperature is externally
-  controlled and supplied with `--temperature` (alias `--temperature-label`).
-  Save it as `Temperature` in result artifacts; it is not a sensor measurement.
+- tAggON is encoded in legacy steps, not nanoseconds. With
+  `--temperature-config`, derive the recorded `Temperature` label from the
+  JSON `dram_target`; do not require a duplicate temperature CLI argument.
+  `--temperature-label` remains available for label-only, externally
+  controlled runs without a controller configuration. Measured controller
+  samples must remain distinct from the requested target label.
 - A no-flip search is censored. Never present its search ceiling as an observed
   HCFirst. Preserve its null HCFirst, tested bound, probe history, and masks.
 
@@ -39,6 +42,30 @@ emitted FPGA programs flat and explicit in `characterization/programs.py`.
 Use the installed, pinned V2 package from `external/dram-bender`; preserve
 upstream source and notices. Preserve existing manifests and result archives;
 use a new run directory when configuration or source changes.
+
+Keep `automate_experiment.py` as the timed subprocess wrapper. It creates a
+timestamped result directory, appends the output directory and fixed
+temperature configuration, sends `SIGTERM` at the deadline, and allows the
+main process to restore FPGA refresh and temperature controllers before a
+forced kill fallback. The home launcher `/home/tpigni/run_dram_test.sh` asks
+for target temperature, duration, and BER versus HCFirst, then invokes this
+wrapper. Preserve the existing result directory naming and V1 artifact format.
+
+Temperature-controlled runs must gate FPGA startup. The monitor enables
+liquid cooling first; for a sub-zero DRAM target it waits until DRAM reaches
+0 C before activating the DRAM controller's negative setpoint. It then waits
+until the measured DRAM temperature is within +/-1 C of the target before
+opening the FPGA board. Do not start hardware work during this settling phase.
+
+The V2 FPGA driver is kernel state, not a Python environment dependency. Use
+the checkout's `drambender_xdma` module and matching bitstream; do not mix it
+with the legacy `/etc/smc_infra` SoftMC stack in one run. Build/load the
+driver through `local/Makefile`, and run applications as the normal user.
+
+Use `local/verify_sa0.py` for real-board memory/mapping verification. Tests in
+`tests/` are hardware-free fakes and protocol/program checks unless a test is
+explicitly documented otherwise. Use `plot_results.py` for post-run CSV to
+PNG plots; it must not modify experiment CSV artifacts.
 
 The API and FPGA setup are fixed. Keep provenance small: one experiment-code
 fingerprint for resume consistency and the existing setup record's API/bitstream

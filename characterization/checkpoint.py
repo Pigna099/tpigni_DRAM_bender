@@ -23,7 +23,8 @@ CSV_FIELDS = ["unit_id", "experiment", "module", "Temperature", "temperature_lab
               "repetition", "status", "hcfirst", "hc_per_aggressor", "total_hammer_acts",
               "bracket_low", "bracket_high", "search_min", "search_max", "search_max_total_acts", "resolution",
               "flips", "tested_bits", "ber", "hammer_model_ns", "total_probe_hammer_ns",
-              "host_wall_seconds", "probe_count", "nonmonotonic_bounds"]
+              "host_wall_seconds", "probe_count", "nonmonotonic_bounds",
+              "dram_temperature", "liquid_temperature"]
 
 
 def canonical(value):
@@ -53,11 +54,17 @@ def work_units(config):
         for pattern in config.patterns:
             for steps in config.taggon_steps:
                 for mode in config.modes:
-                    yield {"victim": victim, "pattern": pattern, "steps": steps, "mode": mode}
+                    if config.experiment == "ber" and len(config.hc_values) > 1:
+                        for hc in config.hc_values:
+                            yield {"victim": victim, "pattern": pattern, "steps": steps,
+                                   "mode": mode, "hc": hc}
+                    else:
+                        yield {"victim": victim, "pattern": pattern, "steps": steps, "mode": mode}
 
 
 def unit_id(unit):
-    return f"r{unit['victim']:06d}_p{unit['pattern']:02x}_t{unit['steps']}_m{unit['mode']}"
+    suffix = f"_h{unit['hc']}" if "hc" in unit else ""
+    return f"r{unit['victim']:06d}_p{unit['pattern']:02x}_t{unit['steps']}_m{unit['mode']}{suffix}"
 
 
 def fsync_dir(path):
