@@ -79,6 +79,72 @@ class TemperatureTests(unittest.TestCase):
             monitor.close()
             thread.join(timeout=1)
 
+    def _pulsed_monitor(self, target=-10, liquid_target=-50):
+        dram = FakeController()
+        liquid = FakeController()
+        config = TemperatureConfig(target, liquid_target)
+        monitor = TemperatureMonitor(dram, liquid, config, clock=lambda: 0.0)
+        monitor.apply_targets()
+        monitor.activate_dram_target(0)  # open the sub-zero Peltier gate
+        return monitor, dram, liquid
+
+    def test_pulsed_regime_starts_only_when_target_is_not_below_liquid(self):
+        monitor, _, liquid = self._pulsed_monitor(target=-30)
+        monitor.control_pump(-30, -25, 100)          # target well below liquid
+        self.assertFalse(monitor.pulsed)
+        monitor.control_pump(-30, -31, 100)          # liquid colder than target
+        self.assertTrue(monitor.pulsed)
+        monitor.control_pump(-30, -25, 100)          # back below liquid with hysteresis
+        self.assertFalse(monitor.pulsed)
+        self.assertEqual(liquid.targets, [-50])      # pump never switched
+
+    def test_pump_cycles_on_dram_bands_with_minimum_dwell(self):
+        monitor, _, liquid = self._pulsed_monitor()
+        liquid_temp = -25
+        monitor.control_pump(-11.5, liquid_temp, 10)  # undershoot but only 10 s on
+        self.assertTrue(monitor.pump_on)
+        monitor.control_pump(-11.5, liquid_temp, 30)  # dwell satisfied -> off
+        self.assertFalse(monitor.pump_on)
+        monitor.control_pump(-8.0, liquid_temp, 45)   # overshoot but only 15 s off
+        self.assertFalse(monitor.pump_on)
+        monitor.control_pump(-10.5, liquid_temp, 60)  # inside the band: stay off
+        self.assertFalse(monitor.pump_on)
+        monitor.control_pump(-8.0, liquid_temp, 60)   # overshoot, 30 s off -> on
+        self.assertTrue(monitor.pump_on)
+        self.assertEqual(liquid.targets, [-50, 50.0, -50])
+
+    def test_pump_stays_on_until_peltier_gate_opens(self):
+        dram = FakeController()
+        liquid = FakeController()
+        monitor = TemperatureMonitor(dram, liquid, TemperatureConfig(-10, -50), clock=lambda: 0.0)
+        monitor.apply_targets()
+        monitor.control_pump(-20, -25, 100)           # DRAM already cold, gate closed
+        self.assertTrue(monitor.pulsed)
+        self.assertTrue(monitor.pump_on)
+        self.assertEqual(liquid.targets, [-50])
+
+    def test_leaving_pulsed_regime_restores_pump_immediately(self):
+        monitor, _, liquid = self._pulsed_monitor()
+        monitor.control_pump(-11.5, -25, 30)
+        self.assertFalse(monitor.pump_on)
+        monitor.control_pump(-11.5, 5, 31)            # liquid warmed far above target
+        self.assertFalse(monitor.pulsed)
+        self.assertTrue(monitor.pump_on)
+
+    def test_monitor_only_never_touches_pump(self):
+        dram = FakeController()
+        monitor = TemperatureMonitor(dram, None, TemperatureConfig(-10, -50), monitor_only=True)
+        monitor.control_pump(-20, None, 100)
+        self.assertTrue(monitor.pump_on)
+
+    def test_rejects_invalid_pump_settings(self):
+        with self.assertRaisesRegex(ValueError, "bands"):
+            TemperatureMonitor(FakeController(), FakeController(),
+                               TemperatureConfig(-10, -50, pump_band_high=0))
+        with self.assertRaisesRegex(ValueError, "pump_min_seconds"):
+            TemperatureMonitor(FakeController(), FakeController(),
+                               TemperatureConfig(-10, -50, pump_min_seconds=-1))
+
     def test_safety_fault_shutdowns_after_delay(self):
         dram = FakeController()
         liquid = FakeController()
