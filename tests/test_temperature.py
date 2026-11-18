@@ -79,10 +79,11 @@ class TemperatureTests(unittest.TestCase):
             monitor.close()
             thread.join(timeout=1)
 
-    def _pulsed_monitor(self, target=-10, liquid_target=-50):
+    def _pulsed_monitor(self, target=-10, liquid_target=-50, **settings):
         dram = FakeController()
         liquid = FakeController()
-        config = TemperatureConfig(target, liquid_target)
+        settings.setdefault("pump_mode", "bangbang")
+        config = TemperatureConfig(target, liquid_target, **settings)
         monitor = TemperatureMonitor(dram, liquid, config, clock=lambda: 0.0)
         monitor.apply_targets()
         monitor.activate_dram_target(0)  # open the sub-zero Peltier gate
@@ -136,6 +137,84 @@ class TemperatureTests(unittest.TestCase):
         monitor = TemperatureMonitor(dram, None, TemperatureConfig(-10, -50), monitor_only=True)
         monitor.control_pump(-20, None, 100)
         self.assertTrue(monitor.pump_on)
+
+    def _run_pi(self, monitor, seconds, dram, liquid_temp=-25, start=0):
+        """Step the pump controller once per second; return (time, state) switches."""
+        switches = []
+        for now in range(start, start + seconds):
+            before = monitor.pump_on
+            temperature = dram(now) if callable(dram) else dram
+            monitor.control_pump(temperature, liquid_temp, now)
+            if monitor.pump_on != before:
+                switches.append((now, "on" if monitor.pump_on else "off"))
+        return switches
+
+    def test_pi_keeps_pump_on_while_far_above_target(self):
+        monitor, _, liquid = self._pulsed_monitor(pump_mode="pi", pump_min_seconds=10)
+        switches = self._run_pi(monitor, 200, -5.0)   # 5 C above target
+        self.assertEqual(switches, [])
+        self.assertTrue(monitor.pump_on)
+        self.assertEqual(liquid.targets, [-50])
+
+    def test_pi_applies_duty_as_on_time_per_window(self):
+        monitor, _, _ = self._pulsed_monitor(
+            pump_mode="pi", pump_min_seconds=10, pump_kp=0, pump_ki=0, pump_duty_initial=0.3)
+        switches = self._run_pi(monitor, 190, -10.0)  # on at target: duty 0.3 of 60 s = 18 s
+        self.assertEqual(switches, [(18, "off"), (60, "on"), (78, "off"),
+                                    (120, "on"), (138, "off"), (180, "on")])
+
+    def test_pi_limits_continuous_on_time(self):
+        monitor, _, _ = self._pulsed_monitor(
+            pump_mode="pi", pump_min_seconds=10, pump_max_on_seconds=25,
+            pump_kp=1.0, pump_ki=0, pump_duty_initial=0.3)
+        # 1.5 C above target asks for far more than 25 s of pump per window.
+        switches = self._run_pi(monitor, 60, -8.5)
+        self.assertEqual(switches, [(25, "off")])
+        self.assertFalse(monitor.pump_on)
+
+    def test_pi_cuts_the_pump_when_dram_undershoots(self):
+        monitor, _, _ = self._pulsed_monitor(
+            pump_mode="pi", pump_min_seconds=10, pump_kp=0, pump_ki=0, pump_duty_initial=0.5)
+        # On-time would be 30 s, but the DRAM falls 1.5 C below target from t=5.
+        switches = self._run_pi(monitor, 60, lambda now: -10.0 if now < 5 else -11.5)
+        self.assertEqual(switches, [(10, "off")])    # earliest moment the dwell allows
+
+    def test_pi_carries_short_duty_until_it_reaches_the_minimum_pulse(self):
+        monitor, _, _ = self._pulsed_monitor(
+            pump_mode="pi", pump_min_seconds=20, pump_kp=0, pump_ki=0, pump_duty_initial=0.15)
+        # 9 s, then 18 s, then 27 s of credit: only the third window pulses.
+        switches = self._run_pi(monitor, 160, -10.0)
+        self.assertEqual(switches, [(20, "off"), (120, "on"), (147, "off")])
+
+    def test_pi_integral_is_bounded_and_grows_when_warm(self):
+        monitor, _, _ = self._pulsed_monitor(
+            pump_mode="pi", pump_min_seconds=10, pump_max_on_seconds=30,
+            pump_kp=0, pump_ki=0.01, pump_duty_initial=0.3)
+        self._run_pi(monitor, 600, -9.0)              # 1 C above target for 10 minutes
+        self.assertGreater(monitor._integral, 0.3)
+        self.assertLessEqual(monitor._integral, 0.5 + 1e-9)   # duty_max = 30 s / 60 s
+        self._run_pi(monitor, 3000, -10.5, start=600)  # then 0.5 C below target
+        self.assertGreaterEqual(monitor._integral, 0.0)
+
+    def test_pi_state_resets_when_leaving_pulsed_regime(self):
+        monitor, _, _ = self._pulsed_monitor(pump_mode="pi", pump_min_seconds=10)
+        self._run_pi(monitor, 30, -10.0)
+        self.assertIsNotNone(monitor._integral)
+        monitor.control_pump(-10.0, 5, 31)            # liquid far above target
+        self.assertFalse(monitor.pulsed)
+        self.assertIsNone(monitor._integral)
+
+    def test_rejects_invalid_pi_settings(self):
+        for settings, message in (
+                ({"pump_mode": "pid"}, "pump_mode"),
+                ({"pump_duty_initial": 1.5}, "pump_duty_initial"),
+                ({"pump_kp": -1}, "pump_kp"),
+                ({"pump_window_seconds": 30}, "twice"),
+                ({"pump_max_on_seconds": 10}, "pump_max_on_seconds")):
+            with self.subTest(settings=settings):
+                with self.assertRaisesRegex(ValueError, message):
+                    TemperatureMonitor(FakeController(), FakeController(),
+                                       TemperatureConfig(-10, -50, **settings))
 
     def test_rejects_invalid_pump_settings(self):
         with self.assertRaisesRegex(ValueError, "bands"):

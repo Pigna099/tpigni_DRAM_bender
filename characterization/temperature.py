@@ -27,10 +27,25 @@ class TemperatureConfig:
     # Pulsed-pump regime, used when the DRAM target is not below the liquid
     # temperature. The pump is cycled by the DRAM temperature while the
     # Peltier (cooling only) keeps trimming to dram_target.
-    pump_min_seconds: float = 30.0
+    pump_min_seconds: float = 20.0
     pump_band_high: float = 1.0
     pump_band_low: float = 1.0
     pulse_margin: float = 2.0
+    # "pi": PI controller with a time-proportional pump (default).
+    # "bangbang": switch on pump_band_high / pump_band_low.
+    pump_mode: str = "pi"
+    # PI mode. The PI output is a duty in [0, 1] applied over one window:
+    # the pump is on for duty * window seconds at the start of each window.
+    # pump_kp is duty per C of error, pump_ki is duty per C per second.
+    pump_window_seconds: float = 60.0
+    pump_kp: float = 0.1
+    pump_ki: float = 0.0005
+    pump_duty_initial: float = 0.3
+    # Longest continuous pump-on time while near the target.
+    pump_max_on_seconds: float = 35.0
+    # Further than this above the target (e.g. during pull-down) the pump stays
+    # on continuously and the on-time limit does not apply.
+    pump_full_on_above: float = 3.0
 
     def as_dict(self):
         return asdict(self)
@@ -56,7 +71,9 @@ def load_config(path):
 def validate_config(config):
     numeric = ("dram_target", "liquid_target", "poll_seconds", "safety_margin_dram",
                "safety_margin_liquid", "safety_delay_seconds", "safe_target",
-               "pump_min_seconds", "pump_band_high", "pump_band_low", "pulse_margin")
+               "pump_min_seconds", "pump_band_high", "pump_band_low", "pulse_margin",
+               "pump_window_seconds", "pump_kp", "pump_ki", "pump_duty_initial",
+               "pump_max_on_seconds", "pump_full_on_above")
     for name in numeric:
         value = getattr(config, name)
         if not isinstance(value, (int, float)) or not float(value) == value:
@@ -71,6 +88,21 @@ def validate_config(config):
         raise ValueError("pump_min_seconds and pulse_margin must not be negative")
     if config.pump_band_high <= 0 or config.pump_band_low <= 0:
         raise ValueError("pump temperature bands must be positive")
+    if config.pump_mode not in ("pi", "bangbang"):
+        raise ValueError("pump_mode must be 'pi' or 'bangbang'")
+    if config.pump_kp < 0 or config.pump_ki < 0:
+        raise ValueError("pump_kp and pump_ki must not be negative")
+    if not 0 <= config.pump_duty_initial <= 1:
+        raise ValueError("pump_duty_initial must be between 0 and 1")
+    if config.pump_window_seconds <= 0 or config.pump_max_on_seconds <= 0 \
+            or config.pump_full_on_above <= 0:
+        raise ValueError("pump_window_seconds, pump_max_on_seconds and "
+                         "pump_full_on_above must be positive")
+    if config.pump_mode == "pi":
+        if config.pump_window_seconds < 2 * config.pump_min_seconds:
+            raise ValueError("pump_window_seconds must be at least twice pump_min_seconds")
+        if config.pump_max_on_seconds < config.pump_min_seconds:
+            raise ValueError("pump_max_on_seconds must not be below pump_min_seconds")
 
 
 class TemperatureMonitor:
@@ -100,6 +132,14 @@ class TemperatureMonitor:
         self.pulsed = False
         self.pump_on = True
         self._pump_changed_at = None
+        self._reset_pi()
+
+    def _reset_pi(self):
+        self._integral = None
+        self._pi_last = None
+        self._window_start = None
+        self._on_time = 0.0
+        self._credit = 0.0
 
     @staticmethod
     def _temperature(controller):
@@ -156,6 +196,7 @@ class TemperatureMonitor:
             return
         self._update_regime(liquid)
         if not self.pulsed:
+            self._reset_pi()
             if not self.pump_on:
                 self._set_pump(True, now, "continuous regime")
             return
@@ -163,6 +204,9 @@ class TemperatureMonitor:
             return  # pull the DRAM down with the pump on until the Peltier gate opens
         if self._pump_changed_at is None:
             self._pump_changed_at = now
+        if self.config.pump_mode == "pi":
+            self._control_pump_pi(dram, now)
+            return
         if now - self._pump_changed_at < self.config.pump_min_seconds:
             return
         target = self.config.dram_target
@@ -170,6 +214,63 @@ class TemperatureMonitor:
             self._set_pump(False, now, f"DRAM {dram:.1f} C below target {target:.1f} C")
         elif not self.pump_on and dram > target + self.config.pump_band_high:
             self._set_pump(True, now, f"DRAM {dram:.1f} C above target {target:.1f} C")
+
+    def _apply_pump(self, want_on, now, reason):
+        """Move the pump to the wanted state once its minimum dwell has passed."""
+        if want_on == self.pump_on:
+            return
+        if now - self._pump_changed_at < self.config.pump_min_seconds:
+            return
+        self._set_pump(want_on, now, reason)
+
+    def _control_pump_pi(self, dram, now):
+        """PI control of the pump duty, applied as an on-time inside each window.
+
+        error > 0 means the DRAM is too warm and needs more cooling. The Peltier
+        only cools, so the pump on-time is what lifts the DRAM back up toward
+        the target by being shortened. On-times shorter than ``pump_min_seconds``
+        are accumulated and released as one pulse, so the average duty holds.
+        """
+        cfg = self.config
+        window = cfg.pump_window_seconds
+        error = dram - cfg.dram_target
+        cap = min(cfg.pump_max_on_seconds, window - cfg.pump_min_seconds)
+        duty_max = cap / window
+
+        if self._integral is None:
+            self._integral = min(cfg.pump_duty_initial, duty_max)
+            self._pi_last = now
+        dt = min(now - self._pi_last, 5 * cfg.poll_seconds)
+        self._pi_last = now
+        # Conditional integration: no windup while the duty is saturated.
+        raw = cfg.pump_kp * error + self._integral
+        if not ((raw >= duty_max and error > 0) or (raw <= 0 and error < 0)):
+            self._integral = min(max(self._integral + cfg.pump_ki * error * dt, 0.0), duty_max)
+        duty = min(max(cfg.pump_kp * error + self._integral, 0.0), duty_max)
+
+        if error > cfg.pump_full_on_above:
+            # Far above the target there is no risk of undershoot: cool without a limit.
+            self._window_start = None
+            self._credit = 0.0
+            self._apply_pump(True, now, f"DRAM {dram:.1f} C far above target")
+            return
+
+        if self._window_start is None or now - self._window_start >= window:
+            desired = duty * window + self._credit
+            if desired < cfg.pump_min_seconds:
+                self._on_time = 0.0
+                self._credit = desired if duty > 0 else 0.0
+            else:
+                self._on_time = min(desired, cap)
+                self._credit = 0.0
+            self._window_start = now
+            LOG.info("pump window: DRAM=%.1f C error=%+.1f C duty=%.2f on-time=%.0f s",
+                     dram, error, duty, self._on_time)
+
+        want_on = now - self._window_start < self._on_time
+        if want_on and error < -cfg.pump_band_low:
+            want_on = False  # undershoot cut-off: the Peltier cannot heat the DRAM back
+        self._apply_pump(want_on, now, f"PI window, DRAM {dram:.1f} C")
 
     def activate_dram_target(self, dram_temperature):
         if not self._dram_ready and dram_temperature <= 0:
