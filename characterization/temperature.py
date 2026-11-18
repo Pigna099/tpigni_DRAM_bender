@@ -24,6 +24,13 @@ class TemperatureConfig:
     safety_margin_liquid: float = 15.0
     safety_delay_seconds: float = 300.0
     safe_target: float = 50.0
+    # Pulsed-pump regime, used when the DRAM target is not below the liquid
+    # temperature. The pump is cycled by the DRAM temperature while the
+    # Peltier (cooling only) keeps trimming to dram_target.
+    pump_min_seconds: float = 30.0
+    pump_band_high: float = 1.0
+    pump_band_low: float = 1.0
+    pulse_margin: float = 2.0
 
     def as_dict(self):
         return asdict(self)
@@ -48,7 +55,8 @@ def load_config(path):
 
 def validate_config(config):
     numeric = ("dram_target", "liquid_target", "poll_seconds", "safety_margin_dram",
-               "safety_margin_liquid", "safety_delay_seconds", "safe_target")
+               "safety_margin_liquid", "safety_delay_seconds", "safe_target",
+               "pump_min_seconds", "pump_band_high", "pump_band_low", "pulse_margin")
     for name in numeric:
         value = getattr(config, name)
         if not isinstance(value, (int, float)) or not float(value) == value:
@@ -59,6 +67,10 @@ def validate_config(config):
         raise ValueError("poll_seconds and safety_delay_seconds must be positive")
     if config.safety_margin_dram < 0 or config.safety_margin_liquid < 0:
         raise ValueError("temperature safety margins must not be negative")
+    if config.pump_min_seconds < 0 or config.pulse_margin < 0:
+        raise ValueError("pump_min_seconds and pulse_margin must not be negative")
+    if config.pump_band_high <= 0 or config.pump_band_low <= 0:
+        raise ValueError("pump temperature bands must be positive")
 
 
 class TemperatureMonitor:
@@ -85,6 +97,9 @@ class TemperatureMonitor:
         self._dram_ready = config.dram_target >= 0
         self._dram_hot_since = None
         self._liquid_hot_since = None
+        self.pulsed = False
+        self.pump_on = True
+        self._pump_changed_at = None
 
     @staticmethod
     def _temperature(controller):
@@ -97,8 +112,64 @@ class TemperatureMonitor:
         # For sub-zero targets, the liquid loop must cool the DRAM to 0 C
         # before the DRAM controller is switched to its negative setpoint.
         self.liquid_controller.changeTargetTemp(self.config.liquid_target)
+        self.pump_on = True
+        self._pump_changed_at = self.clock()
         if self._dram_ready:
             self.dram_controller.changeTargetTemp(self.config.dram_target)
+
+    def _set_pump(self, on, now, reason):
+        """Switch the pump through the liquid controller setpoint.
+
+        The freezer stays on; a setpoint above the liquid temperature only
+        stops circulation, and the liquid target restarts it.
+        """
+        target = self.config.liquid_target if on else LIQUID_OFF_TARGET
+        self.liquid_controller.changeTargetTemp(target)
+        self.pump_on = on
+        self._pump_changed_at = now
+        LOG.info("pump %s (%s)", "ON" if on else "OFF", reason)
+
+    def _update_regime(self, liquid):
+        """Select the pulsed-pump regime while the DRAM target is not below liquid.
+
+        Enter when dram_target > liquid - pulse_margin; leave only when
+        dram_target < liquid - 2 * pulse_margin, so noise cannot chatter it.
+        """
+        margin = self.config.pulse_margin
+        if not self.pulsed and self.config.dram_target > liquid - margin:
+            self.pulsed = True
+            LOG.info("DRAM target %.1f C is not below liquid %.1f C; pulsing the pump",
+                     self.config.dram_target, liquid)
+        elif self.pulsed and self.config.dram_target < liquid - 2 * margin:
+            self.pulsed = False
+            LOG.info("DRAM target %.1f C is below liquid %.1f C; continuous pump",
+                     self.config.dram_target, liquid)
+
+    def control_pump(self, dram, liquid, now):
+        """Cycle the pump around the DRAM target when the liquid is colder than it.
+
+        The Peltier can only cool, so the pump is switched off when the DRAM
+        undershoots the target and back on when it overshoots. Each state
+        lasts at least ``pump_min_seconds``.
+        """
+        if self.monitor_only or self.liquid_controller is None or liquid is None:
+            return
+        self._update_regime(liquid)
+        if not self.pulsed:
+            if not self.pump_on:
+                self._set_pump(True, now, "continuous regime")
+            return
+        if not self._dram_ready:
+            return  # pull the DRAM down with the pump on until the Peltier gate opens
+        if self._pump_changed_at is None:
+            self._pump_changed_at = now
+        if now - self._pump_changed_at < self.config.pump_min_seconds:
+            return
+        target = self.config.dram_target
+        if self.pump_on and dram < target - self.config.pump_band_low:
+            self._set_pump(False, now, f"DRAM {dram:.1f} C below target {target:.1f} C")
+        elif not self.pump_on and dram > target + self.config.pump_band_high:
+            self._set_pump(True, now, f"DRAM {dram:.1f} C above target {target:.1f} C")
 
     def activate_dram_target(self, dram_temperature):
         if not self._dram_ready and dram_temperature <= 0:
@@ -146,13 +217,15 @@ class TemperatureMonitor:
                     self.stop_event.wait(self.config.poll_seconds)
                     continue
                 self.activate_dram_target(dram)
+                self.control_pump(dram, liquid, self.last_sample[0])
                 if self._dram_ready and abs(dram - self.config.dram_target) <= 1.0:
                     if not self.ready_event.is_set():
                         LOG.info("DRAM target reached: %.1f C (target %.1f C)",
                                  dram, self.config.dram_target)
                     self.ready_event.set()
                 fault = self._safety_fault(dram, liquid, self.last_sample[0])
-                LOG.info("temperature DRAM=%.1f C liquid=%.1f C", dram, liquid)
+                LOG.info("temperature DRAM=%.1f C liquid=%.1f C pump=%s",
+                         dram, liquid, "on" if self.pump_on else "off")
                 if fault:
                     self.fault = RuntimeError(fault)
                     self.stop_event.set()
