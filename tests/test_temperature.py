@@ -68,7 +68,7 @@ class TemperatureTests(unittest.TestCase):
     def test_ready_wait_requires_target_within_one_degree(self):
         dram = SequenceController([100, 0, -200])
         liquid = FakeController()
-        config = TemperatureConfig(-20, -50, poll_seconds=0.001)
+        config = TemperatureConfig(-20, -50, poll_seconds=0.001, settle_seconds=0)
         monitor = TemperatureMonitor(dram, liquid, config)
         thread = monitor.start()
         try:
@@ -78,6 +78,25 @@ class TemperatureTests(unittest.TestCase):
         finally:
             monitor.close()
             thread.join(timeout=1)
+
+    def test_ready_requires_staying_in_band_for_settle_time(self):
+        monitor, _, _ = self._pulsed_monitor(settle_seconds=30)
+        monitor._update_ready(-9.4, 100)              # first time inside the band
+        monitor._update_ready(-9.8, 129)
+        self.assertFalse(monitor.ready_event.is_set())
+        monitor._update_ready(-12.5, 130)             # undershoot leaves the band
+        monitor._update_ready(-10.8, 140)             # back inside: the 30 s restart
+        monitor._update_ready(-10.2, 169)
+        self.assertFalse(monitor.ready_event.is_set())
+        monitor._update_ready(-10.1, 170)
+        self.assertTrue(monitor.ready_event.is_set())
+        monitor._update_ready(-14.0, 200)             # stays ready once opened
+        self.assertTrue(monitor.ready_event.is_set())
+
+    def test_rejects_negative_settle_time(self):
+        with self.assertRaisesRegex(ValueError, "settle_seconds"):
+            TemperatureMonitor(FakeController(), FakeController(),
+                               TemperatureConfig(-10, -50, settle_seconds=-1))
 
     def _pulsed_monitor(self, target=-10, liquid_target=-50, **settings):
         dram = FakeController()

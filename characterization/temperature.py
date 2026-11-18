@@ -24,6 +24,9 @@ class TemperatureConfig:
     safety_margin_liquid: float = 15.0
     safety_delay_seconds: float = 300.0
     safe_target: float = 50.0
+    # The FPGA is opened only after the DRAM has stayed within +/-1 C of the
+    # target for this long without leaving the band (0 = open immediately).
+    settle_seconds: float = 30.0
     # Pulsed-pump regime, used when the DRAM target is not below the liquid
     # temperature. The pump is cycled by the DRAM temperature while the
     # Peltier (cooling only) keeps trimming to dram_target.
@@ -71,6 +74,7 @@ def load_config(path):
 def validate_config(config):
     numeric = ("dram_target", "liquid_target", "poll_seconds", "safety_margin_dram",
                "safety_margin_liquid", "safety_delay_seconds", "safe_target",
+               "settle_seconds",
                "pump_min_seconds", "pump_band_high", "pump_band_low", "pulse_margin",
                "pump_window_seconds", "pump_kp", "pump_ki", "pump_duty_initial",
                "pump_max_on_seconds", "pump_full_on_above")
@@ -80,6 +84,8 @@ def validate_config(config):
             raise ValueError(f"{name} must be finite")
     if config.liquid_target > config.dram_target:
         raise ValueError("liquid target must not exceed DRAM target")
+    if config.settle_seconds < 0:
+        raise ValueError("settle_seconds must not be negative")
     if config.poll_seconds <= 0 or config.safety_delay_seconds <= 0:
         raise ValueError("poll_seconds and safety_delay_seconds must be positive")
     if config.safety_margin_dram < 0 or config.safety_margin_liquid < 0:
@@ -127,6 +133,7 @@ class TemperatureMonitor:
         self.fault = None
         self.last_sample = None
         self._dram_ready = config.dram_target >= 0
+        self._in_band_since = None
         self._dram_hot_since = None
         self._liquid_hot_since = None
         self.pulsed = False
@@ -308,6 +315,22 @@ class TemperatureMonitor:
             return "liquid temperature exceeded its safety margin"
         return None
 
+    def _update_ready(self, dram, now):
+        """Open the ready gate once the DRAM stayed within 1 C of the target for settle_seconds."""
+        if self.ready_event.is_set():
+            return
+        if self._dram_ready and abs(dram - self.config.dram_target) <= 1.0:
+            if self._in_band_since is None:
+                self._in_band_since = now
+                LOG.info("DRAM target reached: %.1f C (target %.1f C); settling for %.0f s",
+                         dram, self.config.dram_target, self.config.settle_seconds)
+            if now - self._in_band_since >= self.config.settle_seconds:
+                LOG.info("DRAM stable at %.1f C; opening FPGA", dram)
+                self.ready_event.set()
+        elif self._in_band_since is not None:
+            LOG.info("DRAM left the target band (%.1f C); settling restarts", dram)
+            self._in_band_since = None
+
     def run(self):
         try:
             if not self.monitor_only:
@@ -319,11 +342,7 @@ class TemperatureMonitor:
                     continue
                 self.activate_dram_target(dram)
                 self.control_pump(dram, liquid, self.last_sample[0])
-                if self._dram_ready and abs(dram - self.config.dram_target) <= 1.0:
-                    if not self.ready_event.is_set():
-                        LOG.info("DRAM target reached: %.1f C (target %.1f C)",
-                                 dram, self.config.dram_target)
-                    self.ready_event.set()
+                self._update_ready(dram, self.last_sample[0])
                 fault = self._safety_fault(dram, liquid, self.last_sample[0])
                 LOG.info("temperature DRAM=%.1f C liquid=%.1f C pump=%s",
                          dram, liquid, "on" if self.pump_on else "off")
